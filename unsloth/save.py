@@ -2235,7 +2235,7 @@ pass
 
 
 def not_implemented_save(*args, **kwargs):
-    raise NotImplementedError("Unsloth: Sorry GGUF is currently not supported for vision models!")
+    raise NotImplementedError("Unsloth: Sorry GGUF is currently not supported for vision models! sedd bhai!! ghai!!!")
 pass
 
 
