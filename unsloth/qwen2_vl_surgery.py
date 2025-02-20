@@ -151,6 +151,7 @@ def main(args):
 
 
 if __name__ == "__main__":
+    print("HHHHHHHHHHHHHHHHHHHHHHHHHHHHHEEEEEEEEEEEEEEEEEEEEEELLLLLLLLLLLLLLLLLLLLOOOOOOOOOOOOOOOOOOOOOOOO!!!!!!!!!!!!!!!!!!!!!")
     parser = argparse.ArgumentParser()
     parser.add_argument("model_name", nargs='?', default="Qwen/Qwen2-VL-2B-Instruct")
     parser.add_argument("--data_type", nargs='?', choices=['fp32', 'fp16'], default="fp32")
