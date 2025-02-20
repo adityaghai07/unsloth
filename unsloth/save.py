@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from PIL import Image
 from unsloth_zoo.utils import Version
 from bitsandbytes.nn import Linear4bit as Bnb_Linear4bit
 from peft.tuners.lora import Linear4bit as Peft_Linear4bit
@@ -1685,7 +1686,6 @@ def unsloth_save_pretrained_gguf(
     del arguments["quantization_method"]
     del arguments["first_conversion"]
     print("H!GH@2")
-    print(tokenizer)
     # Fix tokenizer adding an extra BOS token at the front
     fix_bos_token, old_chat_template = fix_tokenizer_bos_token(tokenizer)
     print("HAOFDJKLOASDHAJKLSDH")
