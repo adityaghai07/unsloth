@@ -1530,7 +1530,8 @@ def fix_tokenizer_bos_token(tokenizer):
     chat_template = getattr(tokenizer, "chat_template", None)
     print("WORK!!!")
     from PIL import Image
-    Image.open("./Assistant.png")
+    filepath = input()
+    Image.open(filepath)
     image = image.resize((224, 224))
     print(tokenizer(image).input_ids[0])
     print("WORKING!!")
