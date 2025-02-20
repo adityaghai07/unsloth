@@ -1531,7 +1531,7 @@ def fix_tokenizer_bos_token(tokenizer):
     print("WORK!!!")
     from PIL import Image
     filepath = input()
-    Image.open(filepath)
+    image = Image.open(filepath)
     image = image.resize((224, 224))
     print(tokenizer(image).input_ids[0])
     print("WORKING!!")
