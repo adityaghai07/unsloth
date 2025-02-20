@@ -1654,7 +1654,7 @@ def unsloth_save_pretrained_gguf(
     """
     if tokenizer is None:
         raise ValueError("Unsloth: Saving to GGUF must have a tokenizer.")
-
+    print("H!GH@")
     arguments = dict(locals())
     arguments["model"]        = self
     arguments["tokenizer"]    = tokenizer
@@ -1663,7 +1663,7 @@ def unsloth_save_pretrained_gguf(
     del arguments["self"]
     del arguments["quantization_method"]
     del arguments["first_conversion"]
-
+    print("H!GH@2")
     # Fix tokenizer adding an extra BOS token at the front
     fix_bos_token, old_chat_template = fix_tokenizer_bos_token(tokenizer)
     print("HAOFDJKLOASDHAJKLSDH")
