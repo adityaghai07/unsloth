@@ -1542,6 +1542,7 @@ def fix_tokenizer_bos_token(tokenizer):
 
         # Get tokenized image
         tokenized_output = tokenizer(image)
+        print("HUIUI", tokenized_output)
         if not hasattr(tokenized_output, 'input_ids') or len(tokenized_output.input_ids) == 0:
             logger.warning("Tokenizer output doesn't contain input_ids")
             return fix_bos_token, chat_template
