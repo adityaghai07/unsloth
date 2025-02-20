@@ -564,7 +564,7 @@ class FastVisionModel(FastBaseVisionModel):
             tokenizer_name    = tokenizer_name,
             *args, **kwargs,
         )
-        
+        print("HELLO!!")
         if resize_model_vocab is not None:
             model.resize_token_embeddings(resize_model_vocab)
         pass
