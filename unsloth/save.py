@@ -1525,6 +1525,7 @@ pass
 
 def fix_tokenizer_bos_token(tokenizer):
     # Check if BOS added already, then warn
+    print("HELLOOOO")
     fix_bos_token = False
     chat_template = getattr(tokenizer, "chat_template", None)
     print("WORK!!!")
@@ -1666,6 +1667,7 @@ def unsloth_save_pretrained_gguf(
     del arguments["quantization_method"]
     del arguments["first_conversion"]
     print("H!GH@2")
+    print(tokenizer)
     # Fix tokenizer adding an extra BOS token at the front
     fix_bos_token, old_chat_template = fix_tokenizer_bos_token(tokenizer)
     print("HAOFDJKLOASDHAJKLSDH")
