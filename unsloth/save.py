@@ -1171,12 +1171,11 @@ def save_to_gguf(
             f"--outfile {final_location} --vocab-type {vocab_type} "\
             f"--outtype {first_conversion} --concurrency {n_cpus} --pad-vocab"
     else:
-        cm1 = f"python ./qwen2_vl_surgery.py {model_directory}"
         command = f"python {convert_location} {model_directory} "\
             f"--outfile {final_location} "\
             f"--outtype {first_conversion}"
     pass
-    try_execute([cm1,], force_complete = True)
+
     try_execute([command,], force_complete = True)
 
     # Check if quantization succeeded!
@@ -1684,6 +1683,7 @@ def unsloth_save_pretrained_gguf(
             git_clone.wait()
             makefile = install_llama_cpp_make_non_blocking()
             new_save_directory, old_username = unsloth_save_model(**arguments)
+            print("HELOWOKLDADJIASKLDJHASDKLJHSADLKJHASDLKJHSADKLJAHSDKLJASHDKLAJSHDALKJSHDALKSJDH\n\n")
             python_install.wait()
         pass
     else:
@@ -1709,7 +1709,7 @@ def unsloth_save_pretrained_gguf(
             pass
         pass
     pass
-
+    print("22222HELOWOKLDADJIASKLDJHASDKLJHSADLKJHASDLKJHSADKLJAHSDKLJASHDKLAJSHDALKJSHDALKSJDH\n\n")
     # Use old chat template if the bos is removed
     if fix_bos_token:
         tokenizer.chat_template = old_chat_template
