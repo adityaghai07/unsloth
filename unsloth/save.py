@@ -1522,46 +1522,58 @@ def upload_to_huggingface(
     return username
 pass
 
-
+import logging
 def fix_tokenizer_bos_token(tokenizer):
-    # Check if BOS added already, then warn
+    """
+    Fix tokenizer BOS token and handle image input.
+    Returns: (bool, str) - (whether BOS token needs fixing, original chat template)
+    """
     print("HELLOOOO")
     fix_bos_token = False
     chat_template = getattr(tokenizer, "chat_template", None)
     print("WORK!!!")
-    from PIL import Image
-    filepath = input()
-    image = Image.open(filepath)
-    image = image.resize((224, 224))
-    print(tokenizer(image).input_ids[0])
-    print("WORKING!!")
 
+    try:
+        # Handle image input
+        filepath = input("Enter image path: ")
+        image = Image.open(filepath)
+        image = image.resize((224, 224))
 
-    if (tokenizer(image).input_ids[0] == getattr(tokenizer, "bos_token_id", None)):
-        if chat_template is not None and \
-            (
-                tokenizer.bos_token in chat_template or \
-                "{bos_token}" in chat_template.replace(" ", "") or \
-                "{bos_token+" in chat_template.replace(" ", "")
+        # Get tokenized image
+        tokenized_output = tokenizer(image)
+        if not hasattr(tokenized_output, 'input_ids') or len(tokenized_output.input_ids) == 0:
+            logger.warning("Tokenizer output doesn't contain input_ids")
+            return fix_bos_token, chat_template
+
+        first_token = tokenized_output.input_ids[0]
+        print(f"First token ID: {first_token}")
+        print("WORKING!!")
+
+        # Check BOS token
+        bos_token_id = getattr(tokenizer, "bos_token_id", None)
+        if first_token == bos_token_id:
+            if chat_template is not None and any(
+                token in chat_template.replace(" ", "")
+                for token in [tokenizer.bos_token, "{bos_token}", "{bos_token+"]
             ):
+                fix_bos_token = True
+                logger.warning(
+                    "Unsloth: ##### The current model auto adds a BOS token.\n"
+                    "Unsloth: ##### Your chat template has a BOS token. We shall remove it temporarily."
+                )
 
-            fix_bos_token = True
-            logger.warning(
-                "Unsloth: ##### The current model auto adds a BOS token.\n"\
-                "Unsloth: ##### Your chat template has a BOS token. We shall remove it temporarily."
-            )
+                # Remove BOS token patterns
+                new_chat_template = chat_template
+                new_chat_template = re.sub(r"\{[\s]{0,}\{[\s]{0,}bos\_token[\s]{0,}\}[\s]{0,}\}", "", new_chat_template)
+                new_chat_template = re.sub(r"\{[\s]{0,}\{[\s]{0,}bos\_token[\s]{0,}\+[\s]{0,}", "", new_chat_template)
 
-            # Remove {{bos_token}}
-            new_chat_template = re.sub(r"\{[\s]{0,}\{[\s]{0,}bos\_token[\s]{0,}\}[\s]{0,}\}", "", chat_template)
-            # Remove {{bos_token +
-            new_chat_template = re.sub(r"\{[\s]{0,}\{[\s]{0,}bos\_token[\s]{0,}\+[\s]{0,}", "", new_chat_template)
-            
-            tokenizer.chat_template = new_chat_template
+                tokenizer.chat_template = new_chat_template
 
-        pass
-    pass
+    except Exception as e:
+        logger.error(f"Error processing image: {str(e)}")
+        return fix_bos_token, chat_template
+
     return fix_bos_token, chat_template
-pass
 
 
 def create_ollama_modelfile(tokenizer, gguf_location):
