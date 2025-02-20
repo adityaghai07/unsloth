@@ -1666,10 +1666,10 @@ def unsloth_save_pretrained_gguf(
 
     # Fix tokenizer adding an extra BOS token at the front
     fix_bos_token, old_chat_template = fix_tokenizer_bos_token(tokenizer)
-
+    print("HAOFDJKLOASDHAJKLSDH")
     # Non blocking install GGUF first
     if not os.path.exists("llama.cpp"):
-
+        print("HAOFDJKLOASDHAJKL22222SDH")
         if IS_KAGGLE_ENVIRONMENT:
             # Kaggle is weird - no blocking installs, and no CUDA?
             python_install = install_python_non_blocking(["gguf", "protobuf"])
@@ -1687,6 +1687,7 @@ def unsloth_save_pretrained_gguf(
             python_install.wait()
         pass
     else:
+        print("HAOFDJKLOASDHAJKLSDH4444444")
         try:
             new_save_directory, old_username = unsloth_save_model(**arguments)
             makefile = None
