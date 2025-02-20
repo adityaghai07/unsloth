@@ -1171,11 +1171,12 @@ def save_to_gguf(
             f"--outfile {final_location} --vocab-type {vocab_type} "\
             f"--outtype {first_conversion} --concurrency {n_cpus} --pad-vocab"
     else:
+        cm1 = f"python ./qwen2_vl_surgery.py {model_directory}"
         command = f"python {convert_location} {model_directory} "\
             f"--outfile {final_location} "\
             f"--outtype {first_conversion}"
     pass
-
+    try_execute([cm1,], force_complete = True)
     try_execute([command,], force_complete = True)
 
     # Check if quantization succeeded!
