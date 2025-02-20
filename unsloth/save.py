@@ -1529,9 +1529,14 @@ def fix_tokenizer_bos_token(tokenizer):
     fix_bos_token = False
     chat_template = getattr(tokenizer, "chat_template", None)
     print("WORK!!!")
-    print(tokenizer("A").input_ids[0])
+    from PIL import Image
+    Image.open("./Assistant.png")
+    image = image.resize((224, 224))
+    print(tokenizer(image).input_ids[0])
     print("WORKING!!")
-    if (tokenizer("A").input_ids[0] == getattr(tokenizer, "bos_token_id", None)):
+
+
+    if (tokenizer(image).input_ids[0] == getattr(tokenizer, "bos_token_id", None)):
         if chat_template is not None and \
             (
                 tokenizer.bos_token in chat_template or \
