@@ -2341,10 +2341,12 @@ def patch_saving_functions(model, vision = False):
         pass
     else:
         # Vision only 1 option
+        model.push_to_hub_merged     = types.MethodType(unsloth_push_to_hub_merged,                    model)
+        model.save_pretrained_merged = types.MethodType(unsloth_save_pretrained_merged,                model)
+        model.push_to_hub_gguf       = types.MethodType(unsloth_push_to_hub_gguf,                      model)
         model.save_pretrained_gguf   = types.MethodType(unsloth_save_pretrained_gguf,                  model)
-        model.push_to_hub_merged     = types.MethodType(unsloth_generic_push_to_hub_merged,     model)
-        model.save_pretrained_merged = types.MethodType(unsloth_generic_save_pretrained_merged, model)
-        model.push_to_hub_gguf       = types.MethodType(not_implemented_save,                   model)
+        model.push_to_hub_ggml       = types.MethodType(unsloth_convert_lora_to_ggml_and_push_to_hub,  model)
+        model.save_pretrained_ggml   = types.MethodType(unsloth_convert_lora_to_ggml_and_save_locally, model)
     pass
     return model
 pass
