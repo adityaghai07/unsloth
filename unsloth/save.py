@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from PIL import Image
 from unsloth_zoo.utils import Version
 from bitsandbytes.nn import Linear4bit as Bnb_Linear4bit
 from peft.tuners.lora import Linear4bit as Peft_Linear4bit
@@ -1522,37 +1523,59 @@ def upload_to_huggingface(
     return username
 pass
 
-
+import logging
 def fix_tokenizer_bos_token(tokenizer):
-    # Check if BOS added already, then warn
+    """
+    Fix tokenizer BOS token and handle image input.
+    Returns: (bool, str) - (whether BOS token needs fixing, original chat template)
+    """
+    print("HELLOOOO")
     fix_bos_token = False
     chat_template = getattr(tokenizer, "chat_template", None)
-    
-    if (tokenizer("A").input_ids[0] == getattr(tokenizer, "bos_token_id", None)):
-        if chat_template is not None and \
-            (
-                tokenizer.bos_token in chat_template or \
-                "{bos_token}" in chat_template.replace(" ", "") or \
-                "{bos_token+" in chat_template.replace(" ", "")
+    print("WORK!!!")
+
+    try:
+        # Handle image input
+        filepath = input("Enter image path: ")
+        image = Image.open(filepath)
+        image = image.resize((224, 224))
+
+        # Get tokenized image
+        tokenized_output = tokenizer(image)
+        print("HUIUI", tokenized_output)
+        if not hasattr(tokenized_output, 'input_ids') or len(tokenized_output.input_ids) == 0:
+            logger.warning("Tokenizer output doesn't contain input_ids")
+            return fix_bos_token, chat_template
+
+        first_token = tokenized_output.input_ids[0]
+        print(f"First token ID: {first_token}")
+        print("WORKING!!")
+
+        # Check BOS token
+        bos_token_id = getattr(tokenizer, "bos_token_id", None)
+        if first_token == bos_token_id:
+            if chat_template is not None and any(
+                token in chat_template.replace(" ", "")
+                for token in [tokenizer.bos_token, "{bos_token}", "{bos_token+"]
             ):
+                fix_bos_token = True
+                logger.warning(
+                    "Unsloth: ##### The current model auto adds a BOS token.\n"
+                    "Unsloth: ##### Your chat template has a BOS token. We shall remove it temporarily."
+                )
 
-            fix_bos_token = True
-            logger.warning(
-                "Unsloth: ##### The current model auto adds a BOS token.\n"\
-                "Unsloth: ##### Your chat template has a BOS token. We shall remove it temporarily."
-            )
+                # Remove BOS token patterns
+                new_chat_template = chat_template
+                new_chat_template = re.sub(r"\{[\s]{0,}\{[\s]{0,}bos\_token[\s]{0,}\}[\s]{0,}\}", "", new_chat_template)
+                new_chat_template = re.sub(r"\{[\s]{0,}\{[\s]{0,}bos\_token[\s]{0,}\+[\s]{0,}", "", new_chat_template)
 
-            # Remove {{bos_token}}
-            new_chat_template = re.sub(r"\{[\s]{0,}\{[\s]{0,}bos\_token[\s]{0,}\}[\s]{0,}\}", "", chat_template)
-            # Remove {{bos_token +
-            new_chat_template = re.sub(r"\{[\s]{0,}\{[\s]{0,}bos\_token[\s]{0,}\+[\s]{0,}", "", new_chat_template)
-            
-            tokenizer.chat_template = new_chat_template
+                tokenizer.chat_template = new_chat_template
 
-        pass
-    pass
+    except Exception as e:
+        logger.error(f"Error processing image: {str(e)}")
+        return fix_bos_token, chat_template
+
     return fix_bos_token, chat_template
-pass
 
 
 def create_ollama_modelfile(tokenizer, gguf_location):
@@ -1654,7 +1677,7 @@ def unsloth_save_pretrained_gguf(
     """
     if tokenizer is None:
         raise ValueError("Unsloth: Saving to GGUF must have a tokenizer.")
-
+    print("H!GH@")
     arguments = dict(locals())
     arguments["model"]        = self
     arguments["tokenizer"]    = tokenizer
@@ -1663,13 +1686,13 @@ def unsloth_save_pretrained_gguf(
     del arguments["self"]
     del arguments["quantization_method"]
     del arguments["first_conversion"]
-
+    print("H!GH@2")
     # Fix tokenizer adding an extra BOS token at the front
     fix_bos_token, old_chat_template = fix_tokenizer_bos_token(tokenizer)
-
+    print("HAOFDJKLOASDHAJKLSDH")
     # Non blocking install GGUF first
     if not os.path.exists("llama.cpp"):
-
+        print("HAOFDJKLOASDHAJKL22222SDH")
         if IS_KAGGLE_ENVIRONMENT:
             # Kaggle is weird - no blocking installs, and no CUDA?
             python_install = install_python_non_blocking(["gguf", "protobuf"])
@@ -1683,9 +1706,11 @@ def unsloth_save_pretrained_gguf(
             git_clone.wait()
             makefile = install_llama_cpp_make_non_blocking()
             new_save_directory, old_username = unsloth_save_model(**arguments)
+            print("HELOWOKLDADJIASKLDJHASDKLJHSADLKJHASDLKJHSADKLJAHSDKLJASHDKLAJSHDALKJSHDALKSJDH\n\n")
             python_install.wait()
         pass
     else:
+        print("HAOFDJKLOASDHAJKLSDH4444444")
         try:
             new_save_directory, old_username = unsloth_save_model(**arguments)
             makefile = None
@@ -1708,7 +1733,7 @@ def unsloth_save_pretrained_gguf(
             pass
         pass
     pass
-
+    print("22222HELOWOKLDADJIASKLDJHASDKLJHSADLKJHASDLKJHSADKLJAHSDKLJASHDKLAJSHDALKJSHDALKSJDH\n\n")
     # Use old chat template if the bos is removed
     if fix_bos_token:
         tokenizer.chat_template = old_chat_template
