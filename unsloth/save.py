@@ -1933,6 +1933,8 @@ def unsloth_push_to_hub_gguf(
     pass
 
     is_sentencepiece_model = check_if_sentencepiece_model(self)
+    print("making is_sentencepiece_model true ")
+    print("/n/n")
 
     # Save to GGUF
     all_file_locations, want_full_precision = save_to_gguf(
